@@ -1,0 +1,46 @@
+# set up two variables for Phi and Psi dihedral angles 
+phi: TORSION ATOMS=5,7,9,15
+psi: TORSION ATOMS=7,9,15,17
+theta: TORSION ATOMS=6,5,7,9
+#
+# Activate metadynamics in phi and psi
+# depositing a Gaussian every 500 time steps,
+# with height equal to 1.2 kJoule/mol,
+# and width 0.35 rad for both CVs.
+# Well-tempered metadynamics is activated,
+# and the biasfactor is set to 6.0
+
+ALPHABETA ...
+ATOMS1=5,7,9,15 REFERENCE=1.2
+LABEL=phi1
+... ALPHABETA
+
+ALPHABETA ...
+ATOMS1=7,9,15,17 REFERENCE=1.2
+LABEL=psi1
+... ALPHABETA
+
+ALPHABETA ...
+ATOMS1=6,5,7,9 REFERENCE=1.2
+LABEL=theta1
+... ALPHABETA
+
+COMBINE ARG=phi,psi,theta COEFFICIENTS=-9.095221e-01,1.625895e-01,-3.825365e-01 LABEL=tica PERIODIC=NO
+
+
+METAD ...
+ LABEL=metad
+ ARG=tica
+ SIGMA=0.25
+ HEIGHT=1.2
+ PACE=500
+ TEMP=300
+ BIASFACTOR=6.0
+... METAD
+
+
+
+
+
+# monitor the two variables and the metadynamics bias potential
+PRINT STRIDE=250 ARG=* FILE=COLVAR

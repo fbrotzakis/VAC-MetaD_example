@@ -1,0 +1,22 @@
+# set up two variables for Phi and Psi dihedral angles 
+
+phi1: READ FILE=COLVAR_500 VALUES=phi IGNORE_TIME
+psi1: READ FILE=COLVAR_500 VALUES=psi IGNORE_TIME
+theta1: READ FILE=COLVAR_500 VALUES=theta IGNORE_TIME
+
+rbias: READ FILE=COLVAR_500 VALUES=metad.rbias IGNORE_TIME
+rw: REWEIGHT_METAD ARG=rbias.rbias TEMP=330
+
+TICA ...
+  ARG=phi1,psi1,theta1
+  LAG_TIME=4
+  TAU_NUMBER=100
+  STEP_SIZE=0.5
+  LOGWEIGHTS=rw
+  #EIGEN_VALUE_FILE=eigenvalue.dat
+... TICA
+
+
+
+# monitor the two variables and the metadynamics bias potential
+PRINT STRIDE=250 ARG=* FILE=COLVAR_VAC
